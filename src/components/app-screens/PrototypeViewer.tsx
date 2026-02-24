@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-// Lazy-import all screens
 import { SplashScreen } from './SplashScreen';
 import { HomeScreen } from './HomeScreen';
 import { NotificationsScreen } from './NotificationsScreen';
@@ -23,7 +22,7 @@ import { ConsentsScreen } from './ConsentsScreen';
 import { HelpCenterScreen } from './HelpCenterScreen';
 import { AboutScreen } from './AboutScreen';
 
-/* ─── Screen registry ──────────────────────────────────────── */
+/* ─── Types ──────────────────────────────────────────────── */
 
 type ScreenId =
   | 'splash' | 'home' | 'notifications'
@@ -33,12 +32,16 @@ type ScreenId =
   | 'history' | 'consultation-detail' | 'ordonnances'
   | 'profile' | 'settings' | 'personal-data' | 'consents' | 'help-center' | 'about';
 
+type TransitionType = 'push' | 'pop' | 'modal' | 'dismissModal' | 'tabSwitch' | 'fade';
+
 interface ScreenDef {
   id: ScreenId;
   label: string;
   component: React.ComponentType;
   flow: string;
 }
+
+/* ─── Screen registry ──────────────────────────────────────── */
 
 const screens: ScreenDef[] = [
   { id: 'splash', label: 'Splash', component: SplashScreen, flow: 'Accueil' },
@@ -64,234 +67,402 @@ const screens: ScreenDef[] = [
   { id: 'about', label: 'À propos', component: AboutScreen, flow: 'Profil' },
 ];
 
-/* ─── Navigation mapping ───────────────────────────────────── */
-// Defines what each clickable area navigates to
-const navigationMap: Record<string, Record<string, ScreenId>> = {
-  splash: { _tap: 'home' },
+/* ─── Modal screens (slide up from bottom) ─────────────────── */
+const modalScreens = new Set<ScreenId>(['notes-modal', 'ordonnance-modal', 'map-modal']);
+
+/* ─── Navigation mapping with transition hints ─────────────── */
+
+interface NavTarget {
+  screen: ScreenId;
+  transition?: TransitionType;
+}
+
+const navigationMap: Record<string, Record<string, NavTarget>> = {
+  splash: { _tap: { screen: 'home', transition: 'fade' } },
   home: {
-    'Prendre rendez-vous': 'reminder-detail',
-    'Téléconsultation': 'teleconsultation',
-    'Cabine santé': 'cabin-search',
-    'Ordonnances': 'ordonnances',
-    'Historique': 'history',
-    'Dr. Sophie Laurent': 'consultation-detail',
-    _bell: 'notifications',
-    _tab_accueil: 'home',
-    _tab_historique: 'history',
-    _tab_ordonnances: 'ordonnances',
-    _tab_profil: 'profile',
+    'Prendre rendez-vous': { screen: 'reminder-detail', transition: 'push' },
+    'Téléconsultation': { screen: 'teleconsultation', transition: 'push' },
+    'Cabine santé': { screen: 'cabin-search', transition: 'push' },
+    'Ordonnances': { screen: 'ordonnances', transition: 'tabSwitch' },
+    'Historique': { screen: 'history', transition: 'tabSwitch' },
+    'Dr. Sophie Laurent': { screen: 'consultation-detail', transition: 'push' },
+    _bell: { screen: 'notifications', transition: 'push' },
+    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
+    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
+    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
+    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
   },
-  notifications: { _back: 'home' },
-  'reminder-detail': { _back: 'home', 'Prendre rendez-vous': 'booking-confirmation' },
-  'booking-confirmation': { _back: 'reminder-detail', 'Retour': 'home', 'Ajouter au calendrier': 'calendar-event' },
-  'calendar-event': { _back: 'home' },
-  teleconsultation: { _back: 'home', 'Démarrer': 'video-call' },
-  'video-call': { _end: 'notes-modal' },
-  'notes-modal': { 'Fermer': 'ordonnance-modal' },
-  'ordonnance-modal': { 'Envoyer': 'home' },
-  'cabin-search': { _back: 'home', 'Voir sur la carte': 'map-modal', 'Y aller': 'map-modal' },
-  'map-modal': { _back: 'cabin-search', 'Itinéraire': 'home' },
+  notifications: { _back: { screen: 'home', transition: 'pop' } },
+  'reminder-detail': {
+    _back: { screen: 'home', transition: 'pop' },
+    'Prendre rendez-vous': { screen: 'booking-confirmation', transition: 'push' },
+  },
+  'booking-confirmation': {
+    _back: { screen: 'reminder-detail', transition: 'pop' },
+    'Retour': { screen: 'home', transition: 'pop' },
+    'Ajouter au calendrier': { screen: 'calendar-event', transition: 'push' },
+  },
+  'calendar-event': { _back: { screen: 'home', transition: 'pop' } },
+  teleconsultation: {
+    _back: { screen: 'home', transition: 'pop' },
+    'Démarrer': { screen: 'video-call', transition: 'push' },
+  },
+  'video-call': { _end: { screen: 'notes-modal', transition: 'modal' } },
+  'notes-modal': { 'Fermer': { screen: 'ordonnance-modal', transition: 'modal' } },
+  'ordonnance-modal': { 'Envoyer': { screen: 'home', transition: 'dismissModal' } },
+  'cabin-search': {
+    _back: { screen: 'home', transition: 'pop' },
+    'Voir sur la carte': { screen: 'map-modal', transition: 'modal' },
+    'Y aller': { screen: 'map-modal', transition: 'modal' },
+  },
+  'map-modal': {
+    _back: { screen: 'cabin-search', transition: 'dismissModal' },
+    'Itinéraire': { screen: 'home', transition: 'dismissModal' },
+  },
   history: {
-    _back: 'home',
-    'Dr. Sophie Laurent': 'consultation-detail',
-    'Centre Santé': 'consultation-detail',
-    _tab_accueil: 'home',
-    _tab_historique: 'history',
-    _tab_ordonnances: 'ordonnances',
-    _tab_profil: 'profile',
+    _back: { screen: 'home', transition: 'pop' },
+    'Dr. Sophie Laurent': { screen: 'consultation-detail', transition: 'push' },
+    'Centre Santé': { screen: 'consultation-detail', transition: 'push' },
+    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
+    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
+    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
+    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
   },
-  'consultation-detail': { _back: 'history', 'Prendre un nouveau': 'teleconsultation', 'Ordonnance': 'ordonnance-modal', 'Compte-rendu': 'notes-modal' },
+  'consultation-detail': {
+    _back: { screen: 'history', transition: 'pop' },
+    'Prendre un nouveau': { screen: 'teleconsultation', transition: 'push' },
+    'Ordonnance': { screen: 'ordonnance-modal', transition: 'modal' },
+    'Compte-rendu': { screen: 'notes-modal', transition: 'modal' },
+  },
   ordonnances: {
-    _back: 'home',
-    _tab_accueil: 'home',
-    _tab_historique: 'history',
-    _tab_ordonnances: 'ordonnances',
-    _tab_profil: 'profile',
+    _back: { screen: 'home', transition: 'pop' },
+    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
+    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
+    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
+    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
   },
   profile: {
-    _tab_accueil: 'home',
-    _tab_historique: 'history',
-    _tab_ordonnances: 'ordonnances',
-    _tab_profil: 'profile',
-    'Données personnelles': 'personal-data',
-    'Consentements': 'consents',
-    'Paramètres': 'settings',
-    'Centre d\'aide': 'help-center',
-    'À propos': 'about',
+    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
+    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
+    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
+    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
+    'Données personnelles': { screen: 'personal-data', transition: 'push' },
+    'Consentements': { screen: 'consents', transition: 'push' },
+    'Paramètres': { screen: 'settings', transition: 'push' },
+    'Centre d\'aide': { screen: 'help-center', transition: 'push' },
+    'À propos': { screen: 'about', transition: 'push' },
   },
-  settings: { _back: 'profile' },
-  'personal-data': { _back: 'profile' },
-  consents: { _back: 'profile' },
-  'help-center': { _back: 'profile' },
-  about: { _back: 'profile' },
+  settings: { _back: { screen: 'profile', transition: 'pop' } },
+  'personal-data': { _back: { screen: 'profile', transition: 'pop' } },
+  consents: { _back: { screen: 'profile', transition: 'pop' } },
+  'help-center': { _back: { screen: 'profile', transition: 'pop' } },
+  about: { _back: { screen: 'profile', transition: 'pop' } },
 };
 
 const flows = [...new Set(screens.map(s => s.flow))];
 
-/* ─── Haptic / feedback simulation ─────────────────────────── */
+/* ─── iOS-style easing curves ──────────────────────────────── */
+// iOS uses a custom spring-like curve for navigation
+const IOS_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const IOS_DURATION = 450; // ms — iOS nav push duration
 
+/* ─── CSS styles ───────────────────────────────────────────── */
+const transitionCSS = `
+  /* iOS push: outgoing screen goes left ~30% + dims */
+  .ios-push-old {
+    animation: iosPushOld ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosPushOld {
+    from { transform: translateX(0); opacity: 1; }
+    to   { transform: translateX(-30%); opacity: 0.6; }
+  }
+
+  /* iOS push: incoming screen from right 100% */
+  .ios-push-new {
+    animation: iosPushNew ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosPushNew {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+
+  /* iOS pop: outgoing slides right 100% */
+  .ios-pop-old {
+    animation: iosPopOld ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosPopOld {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
+  }
+
+  /* iOS pop: incoming slides from -30% + undims */
+  .ios-pop-new {
+    animation: iosPopNew ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosPopNew {
+    from { transform: translateX(-30%); opacity: 0.6; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Modal: slides up from bottom */
+  .ios-modal-new {
+    animation: iosModalNew ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosModalNew {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  /* Modal: old screen scales down slightly */
+  .ios-modal-old {
+    animation: iosModalOld ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosModalOld {
+    from { transform: scale(1); border-radius: 0; opacity: 1; }
+    to   { transform: scale(0.92); border-radius: 12px; opacity: 0.6; }
+  }
+
+  /* Dismiss modal: slides down */
+  .ios-dismiss-old {
+    animation: iosDismissOld ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosDismissOld {
+    from { transform: translateY(0); }
+    to   { transform: translateY(100%); }
+  }
+
+  /* Dismiss modal: old screen scales back up */
+  .ios-dismiss-new {
+    animation: iosDismissNew ${IOS_DURATION}ms ${IOS_EASE} forwards;
+  }
+  @keyframes iosDismissNew {
+    from { transform: scale(0.92); border-radius: 12px; opacity: 0.6; }
+    to   { transform: scale(1); border-radius: 0; opacity: 1; }
+  }
+
+  /* Tab switch: cross-dissolve */
+  .ios-tab-old {
+    animation: iosTabOld 280ms ease-out forwards;
+  }
+  @keyframes iosTabOld {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  .ios-tab-new {
+    animation: iosTabNew 280ms ease-out forwards;
+  }
+  @keyframes iosTabNew {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Fade (splash → home) */
+  .ios-fade-old {
+    animation: iosFadeOld 600ms ease-out forwards;
+  }
+  @keyframes iosFadeOld {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.05); }
+  }
+
+  .ios-fade-new {
+    animation: iosFadeNew 600ms ease-out forwards;
+  }
+  @keyframes iosFadeNew {
+    0%   { opacity: 0; transform: scale(0.97); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Toast */
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(8px) translateX(-50%); }
+    to   { opacity: 1; transform: translateY(0) translateX(-50%); }
+  }
+  .toast-enter { animation: toastIn 0.25s ${IOS_EASE} forwards; }
+
+  /* Haptic ripple */
+  @keyframes rippleFade {
+    0% { opacity: 0.7; transform: scale(0.97); }
+    100% { opacity: 0; transform: scale(1.02); }
+  }
+`;
+
+/* ─── Haptic feedback ──────────────────────────────────────── */
 function triggerFeedback(el: HTMLElement) {
-  // Visual ripple
   const ripple = document.createElement('div');
   const rect = el.getBoundingClientRect();
   ripple.style.cssText = `
-    position: fixed; top: ${rect.top}px; left: ${rect.left}px;
-    width: ${rect.width}px; height: ${rect.height}px;
-    background: rgba(18,53,45,0.08); border-radius: 12px;
-    pointer-events: none; z-index: 9999;
-    animation: rippleFade 0.4s ease-out forwards;
+    position:fixed; top:${rect.top}px; left:${rect.left}px;
+    width:${rect.width}px; height:${rect.height}px;
+    background:rgba(18,53,45,0.1); border-radius:12px;
+    pointer-events:none; z-index:9999;
+    animation: rippleFade 0.35s ease-out forwards;
   `;
   document.body.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 400);
+  setTimeout(() => ripple.remove(), 350);
 }
 
 /* ─── Component ────────────────────────────────────────────── */
 
 export function PrototypeViewer() {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('home');
+  const [prevScreen, setPrevScreen] = useState<ScreenId | null>(null);
   const [focusMode, setFocusMode] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
-  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
-  const [history, setHistory] = useState<ScreenId[]>(['home']);
+  const [transitionType, setTransitionType] = useState<TransitionType>('push');
   const [toast, setToast] = useState<string | null>(null);
   const screenRef = useRef<HTMLDivElement>(null);
   const toastTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   const currentDef = screens.find(s => s.id === currentScreen)!;
-  const Screen = currentDef.component;
+  const prevDef = prevScreen ? screens.find(s => s.id === prevScreen) : null;
+  const CurrentComp = currentDef.component;
+  const PrevComp = prevDef?.component || null;
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     if (toastTimeout.current) clearTimeout(toastTimeout.current);
-    toastTimeout.current = setTimeout(() => setToast(null), 2000);
+    toastTimeout.current = setTimeout(() => setToast(null), 1800);
   }, []);
 
-  const navigateTo = useCallback((target: ScreenId, dir: 'forward' | 'back' = 'forward') => {
+  const navigateTo = useCallback((target: ScreenId, transition: TransitionType = 'push') => {
     if (transitioning || target === currentScreen) return;
-    setDirection(dir);
-    setTransitioning(true);
 
     const targetDef = screens.find(s => s.id === target);
-    showToast(`→ ${targetDef?.label || target}`);
+    showToast(`${targetDef?.label || target}`);
 
-    setTimeout(() => {
-      setCurrentScreen(target);
-      setHistory(prev => dir === 'back' ? prev.slice(0, -1) : [...prev, target]);
+    setPrevScreen(currentScreen);
+    setTransitionType(transition);
+    setCurrentScreen(target);
+    setTransitioning(true);
+
+    // Scroll new screen to top after paint
+    requestAnimationFrame(() => {
       if (screenRef.current) screenRef.current.scrollTop = 0;
-      setTimeout(() => setTransitioning(false), 300);
-    }, 150);
+    });
+
+    const duration = transition === 'fade' ? 600 : transition === 'tabSwitch' ? 280 : IOS_DURATION;
+    setTimeout(() => {
+      setTransitioning(false);
+      setPrevScreen(null);
+    }, duration + 20);
   }, [transitioning, currentScreen, showToast]);
 
-  // Click handler for interactive elements inside the phone
+  /* ─── Click handler ─────────────────────────────────────── */
   const handleScreenClick = useCallback((e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     const clickable = target.closest('button, a, [role="button"]') as HTMLElement | null;
     if (!clickable) return;
 
+    e.preventDefault();
+    e.stopPropagation();
+
     const text = clickable.textContent?.trim() || '';
     const navMap = navigationMap[currentScreen] || {};
 
-    // Check for back button (chevron left)
+    // Back button detection
     const svg = clickable.querySelector('svg');
     const polyline = svg?.querySelector('polyline');
-    const isBackButton = polyline?.getAttribute('points')?.includes('15 18 9 12 15 6') ||
-                         polyline?.getAttribute('points')?.includes('15 6 9 12 15 18');
+    const isBack = polyline?.getAttribute('points')?.includes('15 18 9 12 15 6') ||
+                   polyline?.getAttribute('points')?.includes('15 6 9 12 15 18');
 
-    if (isBackButton && navMap._back) {
+    if (isBack && navMap._back) {
       triggerFeedback(clickable);
-      navigateTo(navMap._back, 'back');
+      navigateTo(navMap._back.screen, navMap._back.transition || 'pop');
       return;
     }
 
-    // Check tab bar
-    if (text.includes('Accueil') && navMap._tab_accueil) { triggerFeedback(clickable); navigateTo(navMap._tab_accueil); return; }
-    if (text.includes('Historique') && navMap._tab_historique) { triggerFeedback(clickable); navigateTo(navMap._tab_historique); return; }
-    if (text.includes('Ordonnances') && navMap._tab_ordonnances) { triggerFeedback(clickable); navigateTo(navMap._tab_ordonnances); return; }
-    if (text.includes('Profil') && navMap._tab_profil) { triggerFeedback(clickable); navigateTo(navMap._tab_profil); return; }
+    // Tab bar
+    if (text.includes('Accueil') && navMap._tab_accueil) { triggerFeedback(clickable); navigateTo(navMap._tab_accueil.screen, 'tabSwitch'); return; }
+    if (text.includes('Historique') && navMap._tab_historique) { triggerFeedback(clickable); navigateTo(navMap._tab_historique.screen, 'tabSwitch'); return; }
+    if (text.includes('Ordonnances') && navMap._tab_ordonnances) { triggerFeedback(clickable); navigateTo(navMap._tab_ordonnances.screen, 'tabSwitch'); return; }
+    if (text.includes('Profil') && navMap._tab_profil) { triggerFeedback(clickable); navigateTo(navMap._tab_profil.screen, 'tabSwitch'); return; }
 
     // Notification bell
-    const hasBellPath = clickable.querySelector('path[d*="18 8A6"]');
-    if (hasBellPath && navMap._bell) { triggerFeedback(clickable); navigateTo(navMap._bell); return; }
-
-    // Splash tap
-    if (currentScreen === 'splash') { triggerFeedback(clickable); navigateTo('home'); return; }
-
-    // End call button (red bg)
-    if (clickable.className?.includes?.('DC2626') || clickable.style?.backgroundColor === '#DC2626' || clickable.className?.includes?.('bg-[#DC2626]')) {
-      if (navMap._end) { triggerFeedback(clickable); navigateTo(navMap._end); return; }
+    if (clickable.querySelector('path[d*="18 8A6"]') && navMap._bell) {
+      triggerFeedback(clickable); navigateTo(navMap._bell.screen, navMap._bell.transition || 'push'); return;
     }
 
-    // Text-based navigation
+    // Splash tap anywhere
+    if (currentScreen === 'splash') { navigateTo('home', 'fade'); return; }
+
+    // End call (red button)
+    const cls = clickable.className || '';
+    if ((cls.includes('DC2626') || clickable.style?.backgroundColor === '#DC2626') && navMap._end) {
+      triggerFeedback(clickable); navigateTo(navMap._end.screen, navMap._end.transition || 'modal'); return;
+    }
+
+    // Text-based match
     for (const [key, dest] of Object.entries(navMap)) {
       if (key.startsWith('_')) continue;
       if (text.includes(key) || text.toLowerCase().includes(key.toLowerCase())) {
         triggerFeedback(clickable);
-        navigateTo(dest);
+        navigateTo(dest.screen, dest.transition || 'push');
         return;
       }
     }
 
-    // Generic feedback for unhandled clicks
+    // Unmatched tap feedback
     triggerFeedback(clickable);
   }, [currentScreen, navigateTo]);
 
-  // Handle splash auto-tap (click anywhere)
+  // Splash click (anywhere on screen)
   const handleSplashClick = useCallback(() => {
-    if (currentScreen === 'splash' && !transitioning) {
-      navigateTo('home');
-    }
+    if (currentScreen === 'splash' && !transitioning) navigateTo('home', 'fade');
   }, [currentScreen, transitioning, navigateTo]);
 
-  // Keyboard nav
+  // ESC key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && focusMode) {
-        setFocusMode(false);
-      }
+      if (e.key === 'Escape' && focusMode) setFocusMode(false);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [focusMode]);
 
-  const phoneScale = focusMode ? 'scale-[1.15]' : 'scale-100';
+  /* ─── Transition CSS classes ─────────────────────────────── */
+  const getOldClass = (): string => {
+    switch (transitionType) {
+      case 'push': return 'ios-push-old';
+      case 'pop': return 'ios-pop-old';
+      case 'modal': return 'ios-modal-old';
+      case 'dismissModal': return 'ios-dismiss-old';
+      case 'tabSwitch': return 'ios-tab-old';
+      case 'fade': return 'ios-fade-old';
+    }
+  };
+
+  const getNewClass = (): string => {
+    switch (transitionType) {
+      case 'push': return 'ios-push-new';
+      case 'pop': return 'ios-pop-new';
+      case 'modal': return 'ios-modal-new';
+      case 'dismissModal': return 'ios-dismiss-new';
+      case 'tabSwitch': return 'ios-tab-new';
+      case 'fade': return 'ios-fade-new';
+    }
+  };
+
+  /* ─── Z-index logic ──────────────────────────────────────── */
+  // For push/modal: new screen on top. For pop/dismiss: old screen on top.
+  const newOnTop = transitionType === 'push' || transitionType === 'modal' || transitionType === 'tabSwitch' || transitionType === 'fade';
 
   return (
     <>
-      {/* CSS for animations */}
-      <style>{`
-        @keyframes rippleFade {
-          0% { opacity: 1; transform: scale(1); }
-          100% { opacity: 0; transform: scale(1.05); }
-        }
-        @keyframes slideInRight {
-          from { opacity: 0; transform: translateX(40px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes slideInLeft {
-          from { opacity: 0; transform: translateX(-40px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes toastIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .screen-enter-forward { animation: slideInRight 0.3s ease-out; }
-        .screen-enter-back { animation: slideInLeft 0.3s ease-out; }
-        .toast-enter { animation: toastIn 0.2s ease-out; }
-      `}</style>
+      <style>{transitionCSS}</style>
 
-      <div className={`flex flex-col items-center transition-all duration-500 ${focusMode ? 'fixed inset-0 z-[100] bg-black/95 justify-center' : ''}`}>
-        {/* Focus mode overlay close */}
+      <div className={`flex flex-col items-center transition-all duration-500 ease-out ${focusMode ? 'fixed inset-0 z-[100] bg-black/95 justify-center' : ''}`}>
+
+        {/* Focus mode close */}
         {focusMode && (
-          <button
-            onClick={() => setFocusMode(false)}
-            className="absolute top-6 right-6 z-[110] w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all cursor-pointer"
-          >
+          <button onClick={() => setFocusMode(false)}
+            className="absolute top-6 right-6 z-[110] w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all cursor-pointer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         )}
 
-        {/* Screen selector bar (non-focus) */}
+        {/* Screen selector (non-focus) */}
         {!focusMode && (
           <div className="mb-6 w-full max-w-3xl">
             <div className="flex items-center gap-3 mb-3 flex-wrap">
@@ -300,20 +471,12 @@ export function PrototypeViewer() {
                 const isActiveFlow = flowScreens.some(s => s.id === currentScreen);
                 return (
                   <div key={flow} className="flex items-center gap-1">
-                    <span className={`text-[10px] uppercase tracking-wider font-semibold ${isActiveFlow ? 'text-[#EDE455]' : 'text-white/30'}`}>
-                      {flow}
-                    </span>
+                    <span className={`text-[10px] uppercase tracking-wider font-semibold ${isActiveFlow ? 'text-[#EDE455]' : 'text-white/30'}`}>{flow}</span>
                     <div className="flex gap-1">
                       {flowScreens.map(s => (
-                        <button
-                          key={s.id}
-                          onClick={() => navigateTo(s.id, screens.indexOf(s) < screens.findIndex(x => x.id === currentScreen) ? 'back' : 'forward')}
-                          className={`px-2 py-1 text-[11px] rounded transition-all cursor-pointer ${
-                            s.id === currentScreen
-                              ? 'bg-[#EDE455] text-[#12352D] font-semibold'
-                              : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'
-                          }`}
-                        >
+                        <button key={s.id}
+                          onClick={() => navigateTo(s.id, 'tabSwitch')}
+                          className={`px-2 py-1 text-[11px] rounded transition-all cursor-pointer ${s.id === currentScreen ? 'bg-[#EDE455] text-[#12352D] font-semibold' : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70'}`}>
                           {s.label}
                         </button>
                       ))}
@@ -325,19 +488,13 @@ export function PrototypeViewer() {
           </div>
         )}
 
-        {/* Focus toggle + current screen label */}
+        {/* Label + focus toggle */}
         <div className={`flex items-center gap-3 ${focusMode ? 'absolute top-6 left-6 z-[110]' : 'mb-4'}`}>
-          <span className={`text-xs font-medium px-3 py-1 rounded-full ${focusMode ? 'bg-white/10 text-white/60' : 'bg-white/10 text-white/70'}`}>
+          <span className="text-xs font-medium px-3 py-1 rounded-full bg-white/10 text-white/60">
             {currentDef.flow} — {currentDef.label}
           </span>
-          <button
-            onClick={() => setFocusMode(!focusMode)}
-            className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded-full transition-all cursor-pointer border ${
-              focusMode
-                ? 'bg-[#EDE455]/20 text-[#EDE455] border-[#EDE455]/30'
-                : 'bg-white/5 text-white/50 hover:text-white/70 border-white/10 hover:border-white/20'
-            }`}
-          >
+          <button onClick={() => setFocusMode(!focusMode)}
+            className={`flex items-center gap-1.5 px-3 py-1 text-xs rounded-full transition-all cursor-pointer border ${focusMode ? 'bg-[#EDE455]/20 text-[#EDE455] border-[#EDE455]/30' : 'bg-white/5 text-white/50 hover:text-white/70 border-white/10 hover:border-white/20'}`}>
             {focusMode ? (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
             ) : (
@@ -349,29 +506,53 @@ export function PrototypeViewer() {
 
         {/* Phone frame */}
         <div
-          className={`relative transition-transform duration-500 ease-out ${phoneScale}`}
-          onClick={currentScreen === 'splash' ? handleSplashClick : undefined}
+          className={`relative transition-transform duration-500 ease-out ${focusMode ? 'scale-[1.15]' : 'scale-100'}`}
+          onClick={currentScreen === 'splash' && !transitioning ? handleSplashClick : undefined}
         >
           <div className="w-[395px] h-[852px] bg-[#1a1a1a] rounded-[50px] p-[10px] shadow-[0_25px_80px_rgba(0,0,0,0.5)]">
-            <div className="absolute top-[18px] left-1/2 -translate-x-1/2 w-[126px] h-[36px] bg-black rounded-full z-50" />
+            {/* Dynamic Island */}
+            <div className="absolute top-[18px] left-1/2 -translate-x-1/2 w-[126px] h-[36px] bg-black rounded-full z-[60]" />
+
+            {/* Screen container — BOTH screens rendered during transition */}
             <div
               ref={screenRef}
-              className="w-[375px] h-[832px] bg-white rounded-[40px] overflow-hidden overflow-y-auto relative"
+              className="w-[375px] h-[832px] bg-white rounded-[40px] overflow-hidden relative"
               style={{ scrollbarWidth: 'none' }}
               onClick={handleScreenClick}
             >
+              {/* Old screen (during transition) */}
+              {transitioning && PrevComp && (
+                <div
+                  className={`absolute inset-0 ${getOldClass()}`}
+                  style={{
+                    zIndex: newOnTop ? 1 : 2,
+                    willChange: 'transform, opacity',
+                  }}
+                >
+                  <div className="w-[375px] h-[832px] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                    <PrevComp />
+                  </div>
+                </div>
+              )}
+
+              {/* Current (new) screen */}
               <div
-                key={currentScreen}
-                className={transitioning ? '' : direction === 'forward' ? 'screen-enter-forward' : 'screen-enter-back'}
+                className={`absolute inset-0 ${transitioning ? getNewClass() : ''}`}
+                style={{
+                  zIndex: transitioning ? (newOnTop ? 2 : 1) : 1,
+                  willChange: transitioning ? 'transform, opacity' : 'auto',
+                }}
               >
-                <Screen />
+                <div className="w-[375px] h-[832px] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                  <CurrentComp />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Navigation toast */}
+          {/* Toast */}
           {toast && (
-            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 toast-enter">
+            <div className="absolute -bottom-12 left-1/2 toast-enter" style={{ transform: 'translateX(-50%)' }}>
               <div className="px-4 py-2 bg-[#12352D] text-white text-xs font-medium rounded-full shadow-lg whitespace-nowrap">
                 {toast}
               </div>
@@ -379,40 +560,35 @@ export function PrototypeViewer() {
           )}
         </div>
 
-        {/* Quick nav arrows (focus mode) */}
+        {/* Focus mode nav */}
         {focusMode && (
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-[110]">
             <button
               onClick={() => {
                 const idx = screens.findIndex(s => s.id === currentScreen);
-                if (idx > 0) navigateTo(screens[idx - 1].id, 'back');
+                if (idx > 0) navigateTo(screens[idx - 1].id, 'pop');
               }}
               disabled={screens.findIndex(s => s.id === currentScreen) === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 text-white/80 text-sm rounded-lg transition-colors cursor-pointer disabled:cursor-default"
-            >
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white/80 text-sm rounded-lg transition-colors cursor-pointer disabled:cursor-default">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
               Précédent
             </button>
-            <span className="text-white/30 text-xs">
-              {screens.findIndex(s => s.id === currentScreen) + 1} / {screens.length}
-            </span>
+            <span className="text-white/30 text-xs">{screens.findIndex(s => s.id === currentScreen) + 1} / {screens.length}</span>
             <button
               onClick={() => {
                 const idx = screens.findIndex(s => s.id === currentScreen);
-                if (idx < screens.length - 1) navigateTo(screens[idx + 1].id, 'forward');
+                if (idx < screens.length - 1) navigateTo(screens[idx + 1].id, 'push');
               }}
               disabled={screens.findIndex(s => s.id === currentScreen) === screens.length - 1}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 text-white/80 text-sm rounded-lg transition-colors cursor-pointer disabled:cursor-default"
-            >
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white/80 text-sm rounded-lg transition-colors cursor-pointer disabled:cursor-default">
               Suivant
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
         )}
 
-        {/* ESC hint (focus mode) */}
         {focusMode && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-white/20 z-[110]">
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] text-white/20 z-[110]">
             Appuyer sur ESC pour quitter le mode focus
           </div>
         )}
