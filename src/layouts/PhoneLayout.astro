@@ -1,14 +1,22 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Sidebar from '../components/docs/Sidebar.astro';
+import { ScreenInspector } from '../components/app-screens/ScreenInspector';
+import { screenMetadata } from '../data/screen-metadata';
 
 interface Props {
   title: string;
   screenName: string;
+  screenKey?: string;
   prevScreen?: { label: string; href: string };
   nextScreen?: { label: string; href: string };
 }
 const { title, screenName, prevScreen, nextScreen } = Astro.props;
+
+// Derive screen key from URL path
+const pathParts = Astro.url.pathname.replace(/\/$/, '').split('/');
+const screenKey = pathParts[pathParts.length - 1];
+const meta = screenMetadata[screenKey];
 ---
 <BaseLayout title={title}>
   <Sidebar currentPath={Astro.url.pathname} />
@@ -20,17 +28,32 @@ const { title, screenName, prevScreen, nextScreen } = Astro.props;
       </span>
     </div>
 
-    <!-- Phone frame -->
-    <div class="relative">
-      <!-- Phone bezel -->
-      <div class="w-[395px] h-[852px] bg-[#1a1a1a] rounded-[50px] p-[10px] shadow-[0_25px_80px_rgba(0,0,0,0.5)]">
-        <!-- Dynamic Island -->
-        <div class="absolute top-[18px] left-1/2 -translate-x-1/2 w-[126px] h-[36px] bg-black rounded-full z-50"></div>
-        <!-- Screen area -->
-        <div class="w-[375px] h-[832px] bg-white rounded-[40px] overflow-hidden overflow-y-auto" id="phone-screen">
-          <slot />
+    <!-- Phone + Inspector -->
+    <div class="flex items-start gap-6">
+      <!-- Phone frame -->
+      <div class="relative flex-shrink-0">
+        <!-- Phone bezel -->
+        <div class="w-[395px] h-[852px] bg-[#1a1a1a] rounded-[50px] p-[10px] shadow-[0_25px_80px_rgba(0,0,0,0.5)]">
+          <!-- Dynamic Island -->
+          <div class="absolute top-[18px] left-1/2 -translate-x-1/2 w-[126px] h-[36px] bg-black rounded-full z-50"></div>
+          <!-- Screen area -->
+          <div class="w-[375px] h-[832px] bg-white rounded-[40px] overflow-hidden overflow-y-auto" id="phone-screen">
+            <slot />
+          </div>
         </div>
       </div>
+
+      <!-- Inspector panel -->
+      {meta && (
+        <div class="hidden xl:block flex-shrink-0">
+          <ScreenInspector
+            client:load
+            tokens={meta.tokens}
+            components={meta.components}
+            code={meta.code}
+          />
+        </div>
+      )}
     </div>
 
     <!-- Navigation between screens -->

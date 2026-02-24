@@ -1,3 +1,122 @@
 ---
-return Astro.redirect('/overview');
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
+<BaseLayout title="Accueil">
+  <div class="min-h-screen bg-brand-primary flex flex-col">
+    <!-- Header -->
+    <header class="px-8 py-6 flex items-center justify-between">
+      <div>
+        <span class="font-heading text-xl font-bold text-neutral-white tracking-wide">TESSAN</span>
+      </div>
+      <nav class="flex items-center gap-6">
+        <a href="/overview" class="text-sm text-white/70 hover:text-white transition-colors">Design System</a>
+        <a href="/app" class="text-sm text-white/70 hover:text-white transition-colors">App Mobile</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <main class="flex-1 flex items-center justify-center px-8">
+      <div class="max-w-4xl w-full text-center">
+        <!-- Logo mark -->
+        <div class="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-brand-yellow">
+          <span class="font-heading text-3xl font-bold text-brand-primary">T</span>
+        </div>
+
+        <h1 class="font-heading text-5xl md:text-6xl font-bold text-neutral-white mb-4 leading-tight">
+          Tessan
+        </h1>
+        <p class="text-xl md:text-2xl text-brand-teal-light mb-2" style="font-family: 'Fraunces', Georgia, serif; font-style: italic;">
+          Votre santé, simplifiée
+        </p>
+        <p class="text-base text-white/50 mb-16 max-w-xl mx-auto">
+          Design system et prototypage de l'application mobile patient — téléconsultation, cabines de santé connectées et prévention.
+        </p>
+
+        <!-- Two main CTAs -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <!-- Design System -->
+          <a href="/overview" class="group relative block bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-white/20 transition-all text-left">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-brand-yellow/20 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EDE455" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+              </div>
+              <h2 class="font-heading text-xl font-semibold text-white">Design System</h2>
+            </div>
+            <p class="text-sm text-white/60 mb-6">
+              Tokens de couleurs, typographie, espacement, composants interactifs avec playground live.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-white/40">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-brand-yellow"></span>
+                26 couleurs
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-brand-teal-light"></span>
+                9 composants
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-secondary-salmon"></span>
+                10 text styles
+              </span>
+            </div>
+            <div class="absolute top-8 right-8 text-white/30 group-hover:text-white/60 transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </a>
+
+          <!-- App Mobile -->
+          <a href="/app" class="group relative block bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-white/20 transition-all text-left">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-brand-teal/30 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D9B84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+              </div>
+              <h2 class="font-heading text-xl font-semibold text-white">App Mobile</h2>
+            </div>
+            <p class="text-sm text-white/60 mb-6">
+              21 écrans de l'application patient, organisés par parcours utilisateur dans un simulateur iPhone.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-white/40 flex-wrap">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-brand-teal-light"></span>
+                7 parcours
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-secondary-blue-light"></span>
+                21 écrans
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-secondary-green-lime"></span>
+                Navigation live
+              </span>
+            </div>
+            <div class="absolute top-8 right-8 text-white/30 group-hover:text-white/60 transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </a>
+        </div>
+
+        <!-- Quick links -->
+        <div class="mt-12 flex items-center justify-center gap-6 flex-wrap">
+          <a href="/tokens/colors" class="text-xs text-white/40 hover:text-white/70 transition-colors">Couleurs</a>
+          <span class="text-white/20">·</span>
+          <a href="/tokens/typography" class="text-xs text-white/40 hover:text-white/70 transition-colors">Typographie</a>
+          <span class="text-white/20">·</span>
+          <a href="/components/button" class="text-xs text-white/40 hover:text-white/70 transition-colors">Button</a>
+          <span class="text-white/20">·</span>
+          <a href="/app/home" class="text-xs text-white/40 hover:text-white/70 transition-colors">Home Screen</a>
+          <span class="text-white/20">·</span>
+          <a href="/app/teleconsultation" class="text-xs text-white/40 hover:text-white/70 transition-colors">Téléconsultation</a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="px-8 py-6 text-center">
+      <p class="text-xs text-white/30">Tessan Design System v1.0.0 — Projet de design et prototypage</p>
+    </footer>
+  </div>
+</BaseLayout>

@@ -1,4 +1,4 @@
-export const navigation = [
+export const dsNavigation = [
   {
     title: 'Introduction',
     items: [
@@ -29,6 +29,9 @@ export const navigation = [
       { label: 'BottomNav', href: '/components/bottom-nav' },
     ],
   },
+];
+
+export const appNavigation = [
   {
     title: 'Parcours App',
     items: [
@@ -87,3 +90,6 @@ export const navigation = [
     ],
   },
 ];
+
+// Combined for backward compat
+export const navigation = [...dsNavigation, ...appNavigation];

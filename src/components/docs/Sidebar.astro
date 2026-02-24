@@ -1,23 +1,54 @@
 ---
-import { navigation } from '../../data/navigation';
+import { dsNavigation, appNavigation } from '../../data/navigation';
 
 interface Props {
   currentPath: string;
 }
 const { currentPath } = Astro.props;
+const isAppSection = currentPath.startsWith('/app');
+const activeNav = isAppSection ? appNavigation : dsNavigation;
 ---
 <aside class="fixed top-0 left-0 w-64 h-screen bg-brand-primary overflow-y-auto flex flex-col z-50">
-  <div class="px-6 py-6 border-b border-white/10">
-    <a href="/overview" class="block">
+  <!-- Logo — links to landing -->
+  <div class="px-6 py-5 border-b border-white/10">
+    <a href="/" class="block">
       <span class="font-heading text-xl font-bold text-neutral-white tracking-wide">TESSAN</span>
-      <span class="block text-xs text-brand-teal-light mt-1">Design System</span>
     </a>
   </div>
 
-  <nav class="flex-1 px-4 py-4">
-    {navigation.map((group) => (
-      <div class="mb-6">
-        <h3 class="px-2 mb-2 text-[10px] font-semibold uppercase tracking-wider text-brand-teal-light">
+  <!-- Section switcher -->
+  <div class="px-4 pt-4 pb-2">
+    <div class="flex bg-white/5 rounded-lg p-1">
+      <a
+        href="/overview"
+        class:list={[
+          'flex-1 text-center py-1.5 text-xs font-medium rounded-md transition-all',
+          !isAppSection
+            ? 'bg-brand-yellow text-brand-primary'
+            : 'text-white/60 hover:text-white hover:bg-white/5',
+        ]}
+      >
+        Design System
+      </a>
+      <a
+        href="/app"
+        class:list={[
+          'flex-1 text-center py-1.5 text-xs font-medium rounded-md transition-all',
+          isAppSection
+            ? 'bg-brand-yellow text-brand-primary'
+            : 'text-white/60 hover:text-white hover:bg-white/5',
+        ]}
+      >
+        App Mobile
+      </a>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 px-4 py-2 overflow-y-auto">
+    {activeNav.map((group) => (
+      <div class="mb-5">
+        <h3 class="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand-teal-light">
           {group.title}
         </h3>
         <ul>
