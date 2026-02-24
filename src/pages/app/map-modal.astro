@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { MapModalScreen } from '../../components/app-screens/MapModalScreen';
+---
+<PhoneLayout
+  title="Carte"
+  screenName="MapModalScreen"
+  prevScreen={{ label: "Recherche cabine", href: "/app/cabin-search" }}
+  nextScreen={{ label: "Mes consultations", href: "/app/history" }}
+>
+  <MapModalScreen client:load />
+</PhoneLayout>

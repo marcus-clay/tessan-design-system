@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { HelpCenterScreen } from '../../components/app-screens/HelpCenterScreen';
+---
+<PhoneLayout
+  title="Centre d'aide"
+  screenName="HelpCenterScreen"
+  prevScreen={{ label: "Consentements", href: "/app/consents" }}
+  nextScreen={{ label: "À propos", href: "/app/about" }}
+>
+  <HelpCenterScreen client:load />
+</PhoneLayout>

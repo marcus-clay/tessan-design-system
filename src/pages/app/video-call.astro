@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { VideoCallScreen } from '../../components/app-screens/VideoCallScreen';
+---
+<PhoneLayout
+  title="Appel vidéo"
+  screenName="VideoCallScreen"
+  prevScreen={{ label: "Téléconsultation", href: "/app/teleconsultation" }}
+  nextScreen={{ label: "Notes médecin", href: "/app/notes-modal" }}
+>
+  <VideoCallScreen client:load />
+</PhoneLayout>

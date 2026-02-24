@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { BookingConfirmationScreen } from '../../components/app-screens/BookingConfirmationScreen';
+---
+<PhoneLayout
+  title="Confirmation"
+  screenName="BookingConfirmationScreen"
+  prevScreen={{ label: "Rappel santé", href: "/app/reminder-detail" }}
+  nextScreen={{ label: "Mon agenda", href: "/app/calendar-event" }}
+>
+  <BookingConfirmationScreen client:load />
+</PhoneLayout>

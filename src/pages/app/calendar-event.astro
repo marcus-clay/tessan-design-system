@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { CalendarEventScreen } from '../../components/app-screens/CalendarEventScreen';
+---
+<PhoneLayout
+  title="Mon agenda"
+  screenName="CalendarEventScreen"
+  prevScreen={{ label: "Confirmation", href: "/app/booking-confirmation" }}
+  nextScreen={{ label: "Téléconsultation", href: "/app/teleconsultation" }}
+>
+  <CalendarEventScreen client:load />
+</PhoneLayout>

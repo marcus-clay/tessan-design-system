@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { HomeScreen } from '../../components/app-screens/HomeScreen';
+---
+<PhoneLayout
+  title="Home"
+  screenName="HomeScreen"
+  prevScreen={{ label: "Splash", href: "/app/splash" }}
+  nextScreen={{ label: "Notifications", href: "/app/notifications" }}
+>
+  <HomeScreen client:load />
+</PhoneLayout>

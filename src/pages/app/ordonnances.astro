@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { OrdonnancesScreen } from '../../components/app-screens/OrdonnancesScreen';
+---
+<PhoneLayout
+  title="Ordonnances"
+  screenName="OrdonnancesScreen"
+  prevScreen={{ label: "Détail consultation", href: "/app/consultation-detail" }}
+  nextScreen={{ label: "Mon profil", href: "/app/profile" }}
+>
+  <OrdonnancesScreen client:load />
+</PhoneLayout>

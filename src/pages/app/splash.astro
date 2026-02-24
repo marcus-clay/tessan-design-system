@@ -1,0 +1,11 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { SplashScreen } from '../../components/app-screens/SplashScreen';
+---
+<PhoneLayout
+  title="Splash"
+  screenName="SplashScreen"
+  nextScreen={{ label: "Home", href: "/app/home" }}
+>
+  <SplashScreen client:load />
+</PhoneLayout>

@@ -29,4 +29,61 @@ export const navigation = [
       { label: 'BottomNav', href: '/components/bottom-nav' },
     ],
   },
+  {
+    title: 'Parcours App',
+    items: [
+      { label: 'Vue d\'ensemble', href: '/app' },
+    ],
+  },
+  {
+    title: 'Accueil',
+    items: [
+      { label: 'Splash', href: '/app/splash' },
+      { label: 'Home', href: '/app/home' },
+      { label: 'Notifications', href: '/app/notifications' },
+    ],
+  },
+  {
+    title: 'Prévention',
+    items: [
+      { label: 'Rappel santé', href: '/app/reminder-detail' },
+      { label: 'Confirmation RDV', href: '/app/booking-confirmation' },
+      { label: 'Mon agenda', href: '/app/calendar-event' },
+    ],
+  },
+  {
+    title: 'Téléconsultation',
+    items: [
+      { label: 'Démarrer', href: '/app/teleconsultation' },
+      { label: 'Appel vidéo', href: '/app/video-call' },
+      { label: 'Notes médecin', href: '/app/notes-modal' },
+      { label: 'Ordonnance', href: '/app/ordonnance-modal' },
+    ],
+  },
+  {
+    title: 'Cabine Santé',
+    items: [
+      { label: 'Recherche', href: '/app/cabin-search' },
+      { label: 'Carte', href: '/app/map-modal' },
+    ],
+  },
+  {
+    title: 'Historique',
+    items: [
+      { label: 'Mes consultations', href: '/app/history' },
+      { label: 'Détail consultation', href: '/app/consultation-detail' },
+      { label: 'Ordonnances', href: '/app/ordonnances' },
+    ],
+  },
+  {
+    title: 'Profil',
+    items: [
+      { label: 'Mon profil', href: '/app/profile' },
+      { label: 'Paramètres', href: '/app/settings' },
+      { label: 'Données personnelles', href: '/app/personal-data' },
+      { label: 'Consentements', href: '/app/consents' },
+      { label: 'Centre d\'aide', href: '/app/help-center' },
+      { label: 'À propos', href: '/app/about' },
+    ],
+  },
 ];

@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { CabinSearchScreen } from '../../components/app-screens/CabinSearchScreen';
+---
+<PhoneLayout
+  title="Recherche cabine"
+  screenName="CabinSearchScreen"
+  prevScreen={{ label: "Ordonnance", href: "/app/ordonnance-modal" }}
+  nextScreen={{ label: "Carte", href: "/app/map-modal" }}
+>
+  <CabinSearchScreen client:load />
+</PhoneLayout>

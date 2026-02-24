@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { HistoryScreen } from '../../components/app-screens/HistoryScreen';
+---
+<PhoneLayout
+  title="Mes consultations"
+  screenName="HistoryScreen"
+  prevScreen={{ label: "Carte", href: "/app/map-modal" }}
+  nextScreen={{ label: "Détail consultation", href: "/app/consultation-detail" }}
+>
+  <HistoryScreen client:load />
+</PhoneLayout>

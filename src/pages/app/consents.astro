@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { ConsentsScreen } from '../../components/app-screens/ConsentsScreen';
+---
+<PhoneLayout
+  title="Consentements"
+  screenName="ConsentsScreen"
+  prevScreen={{ label: "Données perso.", href: "/app/personal-data" }}
+  nextScreen={{ label: "Centre d'aide", href: "/app/help-center" }}
+>
+  <ConsentsScreen client:load />
+</PhoneLayout>

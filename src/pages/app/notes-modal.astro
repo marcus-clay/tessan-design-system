@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { NotesModalScreen } from '../../components/app-screens/NotesModalScreen';
+---
+<PhoneLayout
+  title="Notes médecin"
+  screenName="NotesModalScreen"
+  prevScreen={{ label: "Appel vidéo", href: "/app/video-call" }}
+  nextScreen={{ label: "Ordonnance", href: "/app/ordonnance-modal" }}
+>
+  <NotesModalScreen client:load />
+</PhoneLayout>

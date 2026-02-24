@@ -1,0 +1,12 @@
+---
+import PhoneLayout from '../../layouts/PhoneLayout.astro';
+import { SettingsScreen } from '../../components/app-screens/SettingsScreen';
+---
+<PhoneLayout
+  title="Paramètres"
+  screenName="SettingsScreen"
+  prevScreen={{ label: "Mon profil", href: "/app/profile" }}
+  nextScreen={{ label: "Données perso.", href: "/app/personal-data" }}
+>
+  <SettingsScreen client:load />
+</PhoneLayout>
