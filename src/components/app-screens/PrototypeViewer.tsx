@@ -77,9 +77,20 @@ interface NavTarget {
   transition?: TransitionType;
 }
 
+/* Standard tab bar shortcuts */
+const TAB_NAV = {
+  _tab_accueil: { screen: 'home' as ScreenId, transition: 'tabSwitch' as TransitionType },
+  _tab_historique: { screen: 'history' as ScreenId, transition: 'tabSwitch' as TransitionType },
+  _tab_ordonnances: { screen: 'ordonnances' as ScreenId, transition: 'tabSwitch' as TransitionType },
+  _tab_profil: { screen: 'profile' as ScreenId, transition: 'tabSwitch' as TransitionType },
+  _tab_consulter: { screen: 'teleconsultation' as ScreenId, transition: 'push' as TransitionType },
+};
+
 const navigationMap: Record<string, Record<string, NavTarget>> = {
+  /* ── Accueil ────────────────────────────────── */
   splash: { _tap: { screen: 'home', transition: 'fade' } },
   home: {
+    ...TAB_NAV,
     'Prendre rendez-vous': { screen: 'reminder-detail', transition: 'push' },
     'Téléconsultation': { screen: 'teleconsultation', transition: 'push' },
     'Cabine santé': { screen: 'cabin-search', transition: 'push' },
@@ -87,12 +98,19 @@ const navigationMap: Record<string, Record<string, NavTarget>> = {
     'Historique': { screen: 'history', transition: 'tabSwitch' },
     'Dr. Sophie Laurent': { screen: 'consultation-detail', transition: 'push' },
     _bell: { screen: 'notifications', transition: 'push' },
-    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
-    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
-    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
-    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
   },
-  notifications: { _back: { screen: 'home', transition: 'pop' } },
+  notifications: {
+    _back: { screen: 'home', transition: 'pop' },
+    'Rappel rendez-vous': { screen: 'reminder-detail', transition: 'push' },
+    'Rappel prévention': { screen: 'reminder-detail', transition: 'push' },
+    'Ordonnance disponible': { screen: 'ordonnances', transition: 'push' },
+    'Confirmation': { screen: 'booking-confirmation', transition: 'push' },
+    'Mise à jour': { screen: 'about', transition: 'push' },
+    'Rappel': { screen: 'reminder-detail', transition: 'push' },
+    'Téléconsultation': { screen: 'teleconsultation', transition: 'push' },
+  },
+
+  /* ── Prévention ─────────────────────────────── */
   'reminder-detail': {
     _back: { screen: 'home', transition: 'pop' },
     'Prendre rendez-vous': { screen: 'booking-confirmation', transition: 'push' },
@@ -100,16 +118,39 @@ const navigationMap: Record<string, Record<string, NavTarget>> = {
   'booking-confirmation': {
     _back: { screen: 'reminder-detail', transition: 'pop' },
     'Retour': { screen: 'home', transition: 'pop' },
+    'accueil': { screen: 'home', transition: 'pop' },
     'Ajouter au calendrier': { screen: 'calendar-event', transition: 'push' },
   },
-  'calendar-event': { _back: { screen: 'home', transition: 'pop' } },
+  'calendar-event': {
+    ...TAB_NAV,
+    _back: { screen: 'home', transition: 'pop' },
+    'Téléconsultation': { screen: 'teleconsultation', transition: 'push' },
+    'Dr. Sophie Laurent': { screen: 'consultation-detail', transition: 'push' },
+  },
+
+  /* ── Téléconsultation ───────────────────────── */
   teleconsultation: {
     _back: { screen: 'home', transition: 'pop' },
     'Démarrer': { screen: 'video-call', transition: 'push' },
   },
-  'video-call': { _end: { screen: 'notes-modal', transition: 'modal' } },
-  'notes-modal': { 'Fermer': { screen: 'ordonnance-modal', transition: 'modal' } },
-  'ordonnance-modal': { 'Envoyer': { screen: 'home', transition: 'dismissModal' } },
+  'video-call': {
+    _end: { screen: 'notes-modal', transition: 'modal' },
+    _back: { screen: 'teleconsultation', transition: 'pop' },
+  },
+  'notes-modal': {
+    _back: { screen: 'home', transition: 'dismissModal' },
+    _close: { screen: 'home', transition: 'dismissModal' },
+    'Fermer': { screen: 'ordonnance-modal', transition: 'modal' },
+  },
+  'ordonnance-modal': {
+    _back: { screen: 'home', transition: 'dismissModal' },
+    _close: { screen: 'home', transition: 'dismissModal' },
+    'Envoyer': { screen: 'home', transition: 'dismissModal' },
+    'pharmacie': { screen: 'home', transition: 'dismissModal' },
+    'Télécharger': { screen: 'home', transition: 'dismissModal' },
+  },
+
+  /* ── Cabine Santé ───────────────────────────── */
   'cabin-search': {
     _back: { screen: 'home', transition: 'pop' },
     'Voir sur la carte': { screen: 'map-modal', transition: 'modal' },
@@ -117,46 +158,78 @@ const navigationMap: Record<string, Record<string, NavTarget>> = {
   },
   'map-modal': {
     _back: { screen: 'cabin-search', transition: 'dismissModal' },
+    _close: { screen: 'cabin-search', transition: 'dismissModal' },
     'Itinéraire': { screen: 'home', transition: 'dismissModal' },
+    'Réserver': { screen: 'booking-confirmation', transition: 'dismissModal' },
   },
+
+  /* ── Historique ─────────────────────────────── */
   history: {
-    _back: { screen: 'home', transition: 'pop' },
+    ...TAB_NAV,
     'Dr. Sophie Laurent': { screen: 'consultation-detail', transition: 'push' },
     'Centre Santé': { screen: 'consultation-detail', transition: 'push' },
-    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
-    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
-    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
-    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
+    'Dr. Marc Dubois': { screen: 'consultation-detail', transition: 'push' },
+    'Paris 15': { screen: 'consultation-detail', transition: 'push' },
   },
   'consultation-detail': {
     _back: { screen: 'history', transition: 'pop' },
     'Prendre un nouveau': { screen: 'teleconsultation', transition: 'push' },
+    'nouveau RDV': { screen: 'teleconsultation', transition: 'push' },
     'Ordonnance': { screen: 'ordonnance-modal', transition: 'modal' },
     'Compte-rendu': { screen: 'notes-modal', transition: 'modal' },
+    'Rejouer': { screen: 'video-call', transition: 'push' },
   },
+
+  /* ── Ordonnances ────────────────────────────── */
   ordonnances: {
-    _back: { screen: 'home', transition: 'pop' },
-    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
-    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
-    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
-    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
+    ...TAB_NAV,
+    'Doliprane': { screen: 'ordonnance-modal', transition: 'modal' },
+    'Spray nasal': { screen: 'ordonnance-modal', transition: 'modal' },
+    'Physiomer': { screen: 'ordonnance-modal', transition: 'modal' },
+    'Amoxicilline': { screen: 'ordonnance-modal', transition: 'modal' },
   },
+
+  /* ── Profil ─────────────────────────────────── */
   profile: {
-    _tab_accueil: { screen: 'home', transition: 'tabSwitch' },
-    _tab_historique: { screen: 'history', transition: 'tabSwitch' },
-    _tab_ordonnances: { screen: 'ordonnances', transition: 'tabSwitch' },
-    _tab_profil: { screen: 'profile', transition: 'tabSwitch' },
+    ...TAB_NAV,
     'Données personnelles': { screen: 'personal-data', transition: 'push' },
     'Consentements': { screen: 'consents', transition: 'push' },
+    'Notifications': { screen: 'notifications', transition: 'push' },
     'Paramètres': { screen: 'settings', transition: 'push' },
     'Centre d\'aide': { screen: 'help-center', transition: 'push' },
     'À propos': { screen: 'about', transition: 'push' },
+    'Se déconnecter': { screen: 'splash', transition: 'fade' },
+    'déconnecter': { screen: 'splash', transition: 'fade' },
   },
-  settings: { _back: { screen: 'profile', transition: 'pop' } },
-  'personal-data': { _back: { screen: 'profile', transition: 'pop' } },
-  consents: { _back: { screen: 'profile', transition: 'pop' } },
-  'help-center': { _back: { screen: 'profile', transition: 'pop' } },
-  about: { _back: { screen: 'profile', transition: 'pop' } },
+  settings: {
+    _back: { screen: 'profile', transition: 'pop' },
+    'Politique de confidentialité': { screen: 'about', transition: 'push' },
+    'Conditions': { screen: 'about', transition: 'push' },
+    'Supprimer': { screen: 'home', transition: 'pop' },
+  },
+  'personal-data': {
+    _back: { screen: 'profile', transition: 'pop' },
+    'Modifier': { screen: 'profile', transition: 'pop' },
+  },
+  consents: {
+    _back: { screen: 'profile', transition: 'pop' },
+    'Enregistrer': { screen: 'profile', transition: 'pop' },
+  },
+  'help-center': {
+    _back: { screen: 'profile', transition: 'pop' },
+    'Comment fonctionne': { screen: 'teleconsultation', transition: 'push' },
+    'remboursée': { screen: 'about', transition: 'push' },
+    'trouver une cabine': { screen: 'cabin-search', transition: 'push' },
+    'renouveler': { screen: 'reminder-detail', transition: 'push' },
+    'support@tessan': { screen: 'profile', transition: 'pop' },
+  },
+  about: {
+    _back: { screen: 'profile', transition: 'pop' },
+    'Site web': { screen: 'home', transition: 'pop' },
+    'Mentions légales': { screen: 'profile', transition: 'pop' },
+    'Politique de confidentialité': { screen: 'profile', transition: 'pop' },
+    'Conditions': { screen: 'profile', transition: 'pop' },
+  },
 };
 
 const flows = [...new Set(screens.map(s => s.flow))];
@@ -352,7 +425,9 @@ export function PrototypeViewer() {
   /* ─── Click handler ─────────────────────────────────────── */
   const handleScreenClick = useCallback((e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    const clickable = target.closest('button, a, [role="button"]') as HTMLElement | null;
+
+    // Allow clicks on cards / list items too (div with cursor-pointer, etc.)
+    const clickable = target.closest('button, a, [role="button"], [class*="cursor-pointer"]') as HTMLElement | null;
     if (!clickable) return;
 
     e.preventDefault();
@@ -361,7 +436,7 @@ export function PrototypeViewer() {
     const text = clickable.textContent?.trim() || '';
     const navMap = navigationMap[currentScreen] || {};
 
-    // Back button detection
+    /* ── Back button: chevron left (polyline "15 18 9 12 15 6" or similar) ── */
     const svg = clickable.querySelector('svg');
     const polyline = svg?.querySelector('polyline');
     const isBack = polyline?.getAttribute('points')?.includes('15 18 9 12 15 6') ||
@@ -373,29 +448,50 @@ export function PrototypeViewer() {
       return;
     }
 
-    // Tab bar
+    /* ── Close button: X icon (two lines crossing) ── */
+    const lines = clickable.querySelectorAll('line');
+    const isClose = lines.length === 2 &&
+      (lines[0]?.getAttribute('x1') === '18' || lines[0]?.getAttribute('x1') === '6');
+    if (isClose && navMap._close) {
+      triggerFeedback(clickable);
+      navigateTo(navMap._close.screen, navMap._close.transition || 'dismissModal');
+      return;
+    }
+
+    /* ── Tab bar detection ── */
+    // Check if element is inside a bottom nav (fixed/sticky bottom area)
+    const isInBottomNav = clickable.closest('[class*="fixed bottom"]') ||
+                          clickable.closest('[class*="border-t"]')?.parentElement?.lastElementChild === clickable.closest('[class*="border-t"]');
+
     if (text.includes('Accueil') && navMap._tab_accueil) { triggerFeedback(clickable); navigateTo(navMap._tab_accueil.screen, 'tabSwitch'); return; }
     if (text.includes('Historique') && navMap._tab_historique) { triggerFeedback(clickable); navigateTo(navMap._tab_historique.screen, 'tabSwitch'); return; }
-    if (text.includes('Ordonnances') && navMap._tab_ordonnances) { triggerFeedback(clickable); navigateTo(navMap._tab_ordonnances.screen, 'tabSwitch'); return; }
+    if ((text.includes('Ordonnances') || text.includes('Ordo')) && navMap._tab_ordonnances) { triggerFeedback(clickable); navigateTo(navMap._tab_ordonnances.screen, 'tabSwitch'); return; }
     if (text.includes('Profil') && navMap._tab_profil) { triggerFeedback(clickable); navigateTo(navMap._tab_profil.screen, 'tabSwitch'); return; }
+    // Center "Consulter" / phone / teleconsultation tab
+    if ((text.includes('Consulter') || text.includes('Santé') || text.includes('Rendez-vous')) && navMap._tab_consulter) {
+      triggerFeedback(clickable); navigateTo(navMap._tab_consulter.screen, navMap._tab_consulter.transition || 'push'); return;
+    }
 
-    // Notification bell
+    /* ── Notification bell icon ── */
     if (clickable.querySelector('path[d*="18 8A6"]') && navMap._bell) {
       triggerFeedback(clickable); navigateTo(navMap._bell.screen, navMap._bell.transition || 'push'); return;
     }
 
-    // Splash tap anywhere
+    /* ── Splash: tap anywhere ── */
     if (currentScreen === 'splash') { navigateTo('home', 'fade'); return; }
 
-    // End call (red button)
+    /* ── End call: red button (video-call) ── */
     const cls = clickable.className || '';
-    if ((cls.includes('DC2626') || clickable.style?.backgroundColor === '#DC2626') && navMap._end) {
+    if ((cls.includes('DC2626') || cls.includes('red') || clickable.style?.backgroundColor?.includes('DC2626') || clickable.style?.backgroundColor?.includes('220, 38, 38')) && navMap._end) {
       triggerFeedback(clickable); navigateTo(navMap._end.screen, navMap._end.transition || 'modal'); return;
     }
 
-    // Text-based match
-    for (const [key, dest] of Object.entries(navMap)) {
-      if (key.startsWith('_')) continue;
+    /* ── Text-based match: match the longest key first for precision ── */
+    const textKeys = Object.entries(navMap)
+      .filter(([k]) => !k.startsWith('_'))
+      .sort((a, b) => b[0].length - a[0].length);
+
+    for (const [key, dest] of textKeys) {
       if (text.includes(key) || text.toLowerCase().includes(key.toLowerCase())) {
         triggerFeedback(clickable);
         navigateTo(dest.screen, dest.transition || 'push');
@@ -403,7 +499,29 @@ export function PrototypeViewer() {
       }
     }
 
-    // Unmatched tap feedback
+    /* ── Fallback: notification items (clickable cards in notifications screen) ── */
+    if (currentScreen === 'notifications') {
+      // Any tapped notification leads to a relevant screen
+      triggerFeedback(clickable);
+      navigateTo('reminder-detail', 'push');
+      return;
+    }
+
+    /* ── Fallback: ordonnance items (clickable cards in ordonnances screen) ── */
+    if (currentScreen === 'ordonnances') {
+      triggerFeedback(clickable);
+      navigateTo('ordonnance-modal', 'modal');
+      return;
+    }
+
+    /* ── Fallback: history items (consultation cards) ── */
+    if (currentScreen === 'history') {
+      triggerFeedback(clickable);
+      navigateTo('consultation-detail', 'push');
+      return;
+    }
+
+    /* ── Unmatched tap — visual feedback only ── */
     triggerFeedback(clickable);
   }, [currentScreen, navigateTo]);
 
