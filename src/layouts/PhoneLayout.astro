@@ -13,7 +13,6 @@ interface Props {
 }
 const { title, screenName, prevScreen, nextScreen } = Astro.props;
 
-// Derive screen key from URL path
 const pathParts = Astro.url.pathname.replace(/\/$/, '').split('/');
 const screenKey = pathParts[pathParts.length - 1];
 const meta = screenMetadata[screenKey];
@@ -21,22 +20,31 @@ const meta = screenMetadata[screenKey];
 <BaseLayout title={title}>
   <Sidebar currentPath={Astro.url.pathname} />
   <main class="ml-64 min-h-screen bg-[#1a1a2e] flex flex-col items-center py-8 px-4">
-    <!-- Screen name badge -->
-    <div class="mb-4 text-center">
+    <!-- Screen name + inspector toggle -->
+    <div class="mb-4 flex items-center gap-3">
       <span class="inline-block px-3 py-1 bg-white/10 text-white/70 text-xs font-medium rounded-full">
         {screenName}
       </span>
+      {meta && (
+        <button
+          id="inspector-toggle"
+          class="hidden xl:flex items-center gap-1.5 px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white/50 hover:text-white/80 text-xs rounded-full transition-all cursor-pointer"
+          aria-label="Toggle inspector"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span id="toggle-label">Inspect</span>
+        </button>
+      )}
     </div>
 
     <!-- Phone + Inspector -->
     <div class="flex items-start gap-6">
       <!-- Phone frame -->
       <div class="relative flex-shrink-0">
-        <!-- Phone bezel -->
         <div class="w-[395px] h-[852px] bg-[#1a1a1a] rounded-[50px] p-[10px] shadow-[0_25px_80px_rgba(0,0,0,0.5)]">
-          <!-- Dynamic Island -->
           <div class="absolute top-[18px] left-1/2 -translate-x-1/2 w-[126px] h-[36px] bg-black rounded-full z-50"></div>
-          <!-- Screen area -->
           <div class="w-[375px] h-[832px] bg-white rounded-[40px] overflow-hidden overflow-y-auto" id="phone-screen">
             <slot />
           </div>
@@ -45,7 +53,7 @@ const meta = screenMetadata[screenKey];
 
       <!-- Inspector panel -->
       {meta && (
-        <div class="hidden xl:block flex-shrink-0">
+        <div id="inspector-panel" class="hidden flex-shrink-0 transition-all duration-300" style="opacity:0;transform:translateX(-12px)">
           <ScreenInspector
             client:load
             tokens={meta.tokens}
@@ -56,7 +64,7 @@ const meta = screenMetadata[screenKey];
       )}
     </div>
 
-    <!-- Navigation between screens -->
+    <!-- Navigation -->
     <div class="mt-6 flex items-center gap-4">
       {prevScreen ? (
         <a href={prevScreen.href} class="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white/80 text-sm rounded-lg transition-colors">
@@ -75,11 +83,40 @@ const meta = screenMetadata[screenKey];
 </BaseLayout>
 
 <style>
-  #phone-screen::-webkit-scrollbar {
-    display: none;
-  }
-  #phone-screen {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  #phone-screen::-webkit-scrollbar { display: none; }
+  #phone-screen { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
+
+<script>
+  const toggle = document.getElementById('inspector-toggle');
+  const panel = document.getElementById('inspector-panel');
+  const label = document.getElementById('toggle-label');
+
+  if (toggle && panel && label) {
+    let shown = false;
+    toggle.addEventListener('click', () => {
+      shown = !shown;
+      if (shown) {
+        panel.classList.remove('hidden');
+        panel.classList.add('xl:block');
+        requestAnimationFrame(() => {
+          (panel as HTMLElement).style.opacity = '1';
+          (panel as HTMLElement).style.transform = 'translateX(0)';
+        });
+        label.textContent = 'Masquer';
+        toggle.classList.remove('bg-white/5', 'text-white/50');
+        toggle.classList.add('bg-[#EDE455]/20', 'text-[#EDE455]', 'border-[#EDE455]/30');
+      } else {
+        (panel as HTMLElement).style.opacity = '0';
+        (panel as HTMLElement).style.transform = 'translateX(-12px)';
+        setTimeout(() => {
+          panel.classList.add('hidden');
+          panel.classList.remove('xl:block');
+        }, 300);
+        label.textContent = 'Inspect';
+        toggle.classList.add('bg-white/5', 'text-white/50');
+        toggle.classList.remove('bg-[#EDE455]/20', 'text-[#EDE455]', 'border-[#EDE455]/30');
+      }
+    });
+  }
+</script>

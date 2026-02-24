@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Sidebar from '../../components/docs/Sidebar.astro';
+import { PrototypeViewer } from '../../components/app-screens/PrototypeViewer';
+---
+<BaseLayout title="Prototype interactif">
+  <Sidebar currentPath={Astro.url.pathname} />
+  <main class="ml-64 min-h-screen bg-[#1a1a2e] flex flex-col items-center py-8 px-6">
+    <PrototypeViewer client:load />
+  </main>
+</BaseLayout>
+
+<style>
+  main :global(div[style*="scrollbar"]::-webkit-scrollbar) {
+    display: none;
+  }
+</style>

@@ -36,6 +36,7 @@ export const appNavigation = [
     title: 'Parcours App',
     items: [
       { label: 'Vue d\'ensemble', href: '/app' },
+      { label: 'Prototype interactif', href: '/app/prototype' },
     ],
   },
   {
