@@ -118,6 +118,8 @@ const quickActions = [
   { label: 'Historique', bg: '#F2C8B4', icon: IconClipboard },
 ] as const;
 
+import { BottomTabBar } from './BottomTabBar';
+
 /* ------------------------------------------------------------------ */
 /*  HomeScreen component                                              */
 /* ------------------------------------------------------------------ */
@@ -261,53 +263,7 @@ export function HomeScreen() {
       </div>
 
       {/* ---- Bottom navigation bar ---- */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-[#E5E7EB] z-30">
-        <div className="flex items-center justify-around px-2 pt-2 pb-7">
-          {/* Accueil (active) */}
-          <button className="flex flex-col items-center gap-0.5 px-3 py-1">
-            <IconHome active />
-            <span
-              className="text-[10px] font-semibold text-[#12352D]"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              Accueil
-            </span>
-          </button>
-
-          {/* Historique */}
-          <button className="flex flex-col items-center gap-0.5 px-3 py-1">
-            <IconHistory />
-            <span
-              className="text-[10px] text-[#6B7280]"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              Historique
-            </span>
-          </button>
-
-          {/* Ordonnances */}
-          <button className="flex flex-col items-center gap-0.5 px-3 py-1">
-            <IconPrescription />
-            <span
-              className="text-[10px] text-[#6B7280]"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              Ordonnances
-            </span>
-          </button>
-
-          {/* Profil */}
-          <button className="flex flex-col items-center gap-0.5 px-3 py-1">
-            <IconProfile />
-            <span
-              className="text-[10px] text-[#6B7280]"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              Profil
-            </span>
-          </button>
-        </div>
-      </div>
+      <BottomTabBar activeTab="accueil" />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { BottomTabBar } from './BottomTabBar';
+
 export function ProfileScreen() {
   return (
     <div className="w-[375px] h-[812px] bg-[#F5F0E8] flex flex-col relative overflow-hidden">
@@ -195,64 +197,7 @@ export function ProfileScreen() {
       </div>
 
       {/* Bottom navigation */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] flex items-center justify-around px-2 pt-2 pb-7">
-        {/* Accueil */}
-        <div className="flex flex-col items-center gap-1">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
-          <span
-            className="text-[10px] text-[#9CA3AF]"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Accueil
-          </span>
-        </div>
-
-        {/* Rendez-vous */}
-        <div className="flex flex-col items-center gap-1">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-          <span
-            className="text-[10px] text-[#9CA3AF]"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Rendez-vous
-          </span>
-        </div>
-
-        {/* Santé */}
-        <div className="flex flex-col items-center gap-1">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-          <span
-            className="text-[10px] text-[#9CA3AF]"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Sant&eacute;
-          </span>
-        </div>
-
-        {/* Profil (active) */}
-        <div className="flex flex-col items-center gap-1">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B7A68" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-          <span
-            className="text-[10px] text-[#1B7A68] font-semibold"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Profil
-          </span>
-        </div>
-      </div>
+      <BottomTabBar activeTab="profil" />
     </div>
   );
 }
