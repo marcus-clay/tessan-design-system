@@ -1,0 +1,23 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { shadows } from '../../data/tokens';
+---
+<DocsLayout title="Ombres">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Ombres</h1>
+  <p class="text-neutral-gray-medium mb-10">Trois niveaux d'elevation pour la hierarchie visuelle.</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {shadows.map((s) => (
+      <div class="text-center">
+        <div
+          class="bg-neutral-white rounded-xl h-32 flex items-center justify-center mb-4"
+          style={`box-shadow:${s.value}`}
+        >
+          <span class="text-sm font-medium text-brand-primary">shadow-{s.name}</span>
+        </div>
+        <p class="text-sm text-neutral-gray-medium">{s.description}</p>
+        <p class="text-[11px] text-neutral-gray-medium font-mono mt-1">{s.value}</p>
+      </div>
+    ))}
+  </div>
+</DocsLayout>

@@ -1,0 +1,13 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { HeaderPlayground } from '../../components/playground/instances/HeaderPlayground';
+---
+<DocsLayout title="Header">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Header</h1>
+  <p class="text-neutral-gray-medium mb-8">Barre de navigation superieure avec variantes dark et light.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <HeaderPlayground client:visible />
+  </section>
+</DocsLayout>

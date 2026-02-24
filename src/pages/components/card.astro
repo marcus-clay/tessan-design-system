@@ -1,0 +1,43 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { CardPlayground } from '../../components/playground/instances/CardPlayground';
+import { Card } from '../../components/design-system/Card';
+---
+<DocsLayout title="Card">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Card</h1>
+  <p class="text-neutral-gray-medium mb-8">Conteneur avec variantes de fond pour organiser le contenu.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <CardPlayground client:visible />
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Variantes</h2>
+    <div class="space-y-4">
+      <Card client:load variant="light">Card Light - Fond blanc avec ombre subtile</Card>
+      <Card client:load variant="tint">Card Tint - Fond creme</Card>
+      <Card client:load variant="dark">Card Dark - Fond vert fonce, texte blanc</Card>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">API</h2>
+    <div class="bg-neutral-white rounded-xl shadow-sm overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-neutral-gray-light">
+          <tr>
+            <th class="text-left px-4 py-3 font-medium text-brand-primary">Prop</th>
+            <th class="text-left px-4 py-3 font-medium text-brand-primary">Type</th>
+            <th class="text-left px-4 py-3 font-medium text-brand-primary">Default</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-gray-100">
+          <tr><td class="px-4 py-2 font-mono text-xs">variant</td><td class="px-4 py-2 text-neutral-gray-medium">'light' | 'tint' | 'dark'</td><td class="px-4 py-2 font-mono text-xs">'light'</td></tr>
+          <tr><td class="px-4 py-2 font-mono text-xs">padding</td><td class="px-4 py-2 text-neutral-gray-medium">'sm' | 'md' | 'lg'</td><td class="px-4 py-2 font-mono text-xs">'md'</td></tr>
+          <tr><td class="px-4 py-2 font-mono text-xs">children</td><td class="px-4 py-2 text-neutral-gray-medium">ReactNode</td><td class="px-4 py-2 font-mono text-xs">-</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</DocsLayout>

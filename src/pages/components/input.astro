@@ -1,0 +1,13 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { InputPlayground } from '../../components/playground/instances/InputPlayground';
+---
+<DocsLayout title="Input">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Input</h1>
+  <p class="text-neutral-gray-medium mb-8">Champ de saisie texte avec label, placeholder et etat d'erreur.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <InputPlayground client:visible />
+  </section>
+</DocsLayout>

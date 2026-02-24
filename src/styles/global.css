@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+
+  --color-brand-primary: #12352D;
+  --color-brand-teal: #1B7A68;
+  --color-brand-teal-light: #2D9B84;
+  --color-brand-yellow: #EDE455;
+  --color-brand-yellow-dark: #D4CC3A;
+
+  --color-surface-cream: #F5F0E8;
+  --color-surface-card-tint: #F5F0E8;
+  --color-surface-card-dark: #12352D;
+  --color-surface-card-light: #FAFAF7;
+
+  --color-secondary-salmon: #F2C8B4;
+  --color-secondary-blue-light: #D4E8F5;
+  --color-secondary-green-lime: #E5EDCC;
+  --color-secondary-yellow-pale: #FDF5DC;
+
+  --color-neutral-white: #FFFFFF;
+  --color-neutral-gray-light: #F7F5F0;
+  --color-neutral-gray-100: #F0F0F0;
+  --color-neutral-gray-200: #E5E7EB;
+  --color-neutral-gray-medium: #6B7280;
+  --color-neutral-gray-dark: #1F2937;
+  --color-neutral-black: #1A1A1A;
+
+  --color-semantic-success: #059669;
+  --color-semantic-warning: #D97706;
+  --color-semantic-danger: #DC2626;
+
+  --color-status-normal-bg: #F5F0E8;
+  --color-status-warning-bg: #FEF3C7;
+  --color-status-danger-bg: #FEE2E2;
+  --color-status-success-bg: #E5EDCC;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-neutral-gray-dark);
+  background-color: var(--color-surface-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

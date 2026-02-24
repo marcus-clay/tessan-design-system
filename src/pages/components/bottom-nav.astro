@@ -1,0 +1,13 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { BottomNavPlayground } from '../../components/playground/instances/BottomNavPlayground';
+---
+<DocsLayout title="BottomNav">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">BottomNav</h1>
+  <p class="text-neutral-gray-medium mb-8">Navigation inferieure avec 4 onglets : Accueil, Historique, Ordonnances, Profil.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <BottomNavPlayground client:visible />
+  </section>
+</DocsLayout>

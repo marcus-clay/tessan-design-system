@@ -1,0 +1,25 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { spacing } from '../../data/tokens';
+---
+<DocsLayout title="Espacement">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Espacement</h1>
+  <p class="text-neutral-gray-medium mb-10">Echelle d'espacement basee sur des multiples de 4px.</p>
+
+  <div class="bg-neutral-white rounded-xl p-6 shadow-sm">
+    <div class="space-y-4">
+      {spacing.map((s) => (
+        <div class="flex items-center gap-4">
+          <span class="w-10 text-right text-sm font-mono text-neutral-gray-medium">{s.name}</span>
+          <div class="flex-1 flex items-center gap-3">
+            <div
+              class="h-6 bg-brand-teal rounded"
+              style={`width:${s.value}`}
+            ></div>
+            <span class="text-sm text-neutral-gray-dark font-mono">{s.value}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</DocsLayout>

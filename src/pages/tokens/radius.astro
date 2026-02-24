@@ -1,0 +1,21 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { radii } from '../../data/tokens';
+---
+<DocsLayout title="Border Radius">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Border Radius</h1>
+  <p class="text-neutral-gray-medium mb-10">Echelle d'arrondis pour les composants.</p>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+    {radii.map((r) => (
+      <div class="text-center">
+        <div
+          class="w-24 h-24 mx-auto bg-brand-teal-light mb-3"
+          style={`border-radius:${r.value}`}
+        ></div>
+        <p class="text-sm font-medium text-brand-primary">rounded-{r.name}</p>
+        <p class="text-[11px] text-neutral-gray-medium font-mono">{r.value}</p>
+      </div>
+    ))}
+  </div>
+</DocsLayout>

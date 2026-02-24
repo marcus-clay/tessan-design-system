@@ -1,0 +1,22 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { StatCardPlayground } from '../../components/playground/instances/StatCardPlayground';
+import { StatCard } from '../../components/design-system/StatCard';
+---
+<DocsLayout title="StatCard">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">StatCard</h1>
+  <p class="text-neutral-gray-medium mb-8">Carte de statistique avec valeur KPI en grand.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <StatCardPlayground client:visible />
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Variantes</h2>
+    <div class="flex gap-4 bg-neutral-white rounded-xl p-6 shadow-sm">
+      <StatCard client:load label="CONSULTATIONS" value="8" variant="default" />
+      <StatCard client:load label="PROCHAIN RAPPEL" value="12" unit="j" variant="highlight" />
+    </div>
+  </section>
+</DocsLayout>

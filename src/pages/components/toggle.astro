@@ -1,0 +1,13 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { TogglePlayground } from '../../components/playground/instances/TogglePlayground';
+---
+<DocsLayout title="Toggle">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Toggle</h1>
+  <p class="text-neutral-gray-medium mb-8">Interrupteur on/off pour les parametres.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <TogglePlayground client:visible />
+  </section>
+</DocsLayout>

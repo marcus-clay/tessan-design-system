@@ -1,0 +1,75 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import { colors } from '../data/tokens';
+---
+<DocsLayout title="Vue d'ensemble">
+  <h1 class="font-heading text-4xl font-bold text-brand-primary mb-3">
+    Tessan Design System
+  </h1>
+  <p class="text-lg text-neutral-gray-medium mb-12 max-w-2xl">
+    Systeme de design pour l'application mobile patient Tessan.
+    Teleconsultation, cabines de sante et rappels de prevention.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <a href="/tokens/colors" class="group block bg-neutral-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex gap-2 mb-3">
+        {colors.brand.slice(0, 4).map((c) => (
+          <div class="w-8 h-8 rounded-full" style={`background:${c.hex}`}></div>
+        ))}
+      </div>
+      <h3 class="font-heading font-semibold text-brand-primary group-hover:text-brand-teal transition-colors">Couleurs</h3>
+      <p class="text-sm text-neutral-gray-medium mt-1">26 tokens de couleur</p>
+    </a>
+    <a href="/tokens/typography" class="group block bg-neutral-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="mb-3">
+        <span class="font-heading text-2xl font-bold text-brand-primary">Aa</span>
+        <span class="ml-2 text-lg text-neutral-gray-medium">Aa</span>
+      </div>
+      <h3 class="font-heading font-semibold text-brand-primary group-hover:text-brand-teal transition-colors">Typographie</h3>
+      <p class="text-sm text-neutral-gray-medium mt-1">Fraunces + Inter</p>
+    </a>
+    <a href="/components/button" class="group block bg-neutral-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="mb-3 flex gap-2">
+        <span class="inline-block bg-brand-yellow text-neutral-black text-xs font-semibold px-3 py-1.5 rounded-md">Primary</span>
+        <span class="inline-block border-2 border-brand-primary text-brand-primary text-xs font-semibold px-3 py-1.5 rounded-md">Secondary</span>
+      </div>
+      <h3 class="font-heading font-semibold text-brand-primary group-hover:text-brand-teal transition-colors">Composants</h3>
+      <p class="text-sm text-neutral-gray-medium mt-1">9 composants interactifs</p>
+    </a>
+  </div>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-2xl font-semibold text-brand-primary mb-4">Palette de marque</h2>
+    <div class="flex gap-3 flex-wrap">
+      {[...colors.brand, ...colors.secondary].map((c) => (
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-lg shadow-sm" style={`background:${c.hex}`}></div>
+          <span class="text-[10px] text-neutral-gray-medium mt-1 block">{c.name}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="font-heading text-2xl font-semibold text-brand-primary mb-4">Principes</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-neutral-white rounded-xl p-5 shadow-sm">
+        <h4 class="font-semibold text-brand-primary mb-1">Mobile-first</h4>
+        <p class="text-sm text-neutral-gray-medium">Concu pour 375px minimum. Touch targets de 44px.</p>
+      </div>
+      <div class="bg-neutral-white rounded-xl p-5 shadow-sm">
+        <h4 class="font-semibold text-brand-primary mb-1">Accessible</h4>
+        <p class="text-sm text-neutral-gray-medium">Contrastes WCAG AA, focus states, aria-labels.</p>
+      </div>
+      <div class="bg-neutral-white rounded-xl p-5 shadow-sm">
+        <h4 class="font-semibold text-brand-primary mb-1">Consistant</h4>
+        <p class="text-sm text-neutral-gray-medium">Tokens partages entre design et code.</p>
+      </div>
+      <div class="bg-neutral-white rounded-xl p-5 shadow-sm">
+        <h4 class="font-semibold text-brand-primary mb-1">Performant</h4>
+        <p class="text-sm text-neutral-gray-medium">Composants legers, animations 60fps.</p>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

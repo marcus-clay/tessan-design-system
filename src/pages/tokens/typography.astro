@@ -1,0 +1,54 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { typography } from '../../data/tokens';
+---
+<DocsLayout title="Typographie">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Typographie</h1>
+  <p class="text-neutral-gray-medium mb-10">Deux familles : Fraunces pour les titres, Inter pour le corps de texte.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-6">Fraunces - Titres</h2>
+    <div class="space-y-6">
+      {typography.heading.map((style) => (
+        <div class="bg-neutral-white rounded-xl p-6 shadow-sm">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="text-xs font-medium text-brand-teal bg-surface-cream px-2 py-1 rounded">{style.name}</span>
+            <span class="text-[11px] text-neutral-gray-medium font-mono">{style.font} {style.weight} / {style.size}</span>
+          </div>
+          <p class="font-heading text-brand-primary" style={`font-size:${style.size}; font-weight:${style.weight.includes('Bold') ? '700' : '600'}`}>
+            {style.sample}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-6">Inter - Corps</h2>
+    <div class="space-y-4">
+      {typography.body.map((style) => (
+        <div class="bg-neutral-white rounded-xl p-6 shadow-sm">
+          <div class="flex items-baseline justify-between mb-3">
+            <span class="text-xs font-medium text-brand-teal bg-surface-cream px-2 py-1 rounded">{style.name}</span>
+            <span class="text-[11px] text-neutral-gray-medium font-mono">{style.font} {style.weight} / {style.size}</span>
+          </div>
+          <p class="text-neutral-gray-dark" style={`font-family:Inter,sans-serif; font-size:${style.size}; font-weight:${style.weight.match(/\d+/)?.[0] || '400'}`}>
+            {style.sample}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Utilisation</h2>
+    <div class="bg-neutral-white rounded-xl p-6 shadow-sm">
+      <pre class="text-sm text-neutral-gray-dark font-mono overflow-x-auto"><code>font-family: var(--font-heading);  /* Fraunces */
+font-family: var(--font-body);     /* Inter */
+
+/* Tailwind classes */
+class="font-heading"  /* Fraunces */
+class="font-body"     /* Inter */</code></pre>
+    </div>
+  </section>
+</DocsLayout>

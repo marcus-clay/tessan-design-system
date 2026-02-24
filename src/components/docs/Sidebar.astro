@@ -1,0 +1,50 @@
+---
+import { navigation } from '../../data/navigation';
+
+interface Props {
+  currentPath: string;
+}
+const { currentPath } = Astro.props;
+---
+<aside class="fixed top-0 left-0 w-64 h-screen bg-brand-primary overflow-y-auto flex flex-col z-50">
+  <div class="px-6 py-6 border-b border-white/10">
+    <a href="/overview" class="block">
+      <span class="font-heading text-xl font-bold text-neutral-white tracking-wide">TESSAN</span>
+      <span class="block text-xs text-brand-teal-light mt-1">Design System</span>
+    </a>
+  </div>
+
+  <nav class="flex-1 px-4 py-4">
+    {navigation.map((group) => (
+      <div class="mb-6">
+        <h3 class="px-2 mb-2 text-[10px] font-semibold uppercase tracking-wider text-brand-teal-light">
+          {group.title}
+        </h3>
+        <ul>
+          {group.items.map((item) => {
+            const isActive = currentPath === item.href || currentPath === item.href + '/';
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={[
+                    'block px-3 py-1.5 rounded-md text-sm transition-colors',
+                    isActive
+                      ? 'bg-white/10 text-brand-yellow font-medium'
+                      : 'text-white/70 hover:text-white hover:bg-white/5',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
+  </nav>
+
+  <div class="px-6 py-4 border-t border-white/10 text-[11px] text-white/40">
+    v1.0.0
+  </div>
+</aside>

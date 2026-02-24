@@ -1,0 +1,13 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { ListItemPlayground } from '../../components/playground/instances/ListItemPlayground';
+---
+<DocsLayout title="ListItem">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">ListItem</h1>
+  <p class="text-neutral-gray-medium mb-8">Element de liste avec icone, titre, sous-titre et fleche.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <ListItemPlayground client:visible />
+  </section>
+</DocsLayout>

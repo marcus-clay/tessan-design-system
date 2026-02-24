@@ -1,0 +1,54 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { ButtonPlayground } from '../../components/playground/instances/ButtonPlayground';
+import { Button } from '../../components/design-system/Button';
+---
+<DocsLayout title="Button">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Button</h1>
+  <p class="text-neutral-gray-medium mb-8">Bouton interactif pour les CTA et actions utilisateur.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <ButtonPlayground client:visible />
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Variantes</h2>
+    <div class="flex flex-wrap gap-4 bg-neutral-white rounded-xl p-6 shadow-sm">
+      <Button client:load variant="primary">Primary</Button>
+      <Button client:load variant="secondary">Secondary</Button>
+      <Button client:load variant="ghost">Ghost</Button>
+    </div>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Tailles</h2>
+    <div class="flex flex-wrap items-center gap-4 bg-neutral-white rounded-xl p-6 shadow-sm">
+      <Button client:load size="sm">Small</Button>
+      <Button client:load size="md">Medium</Button>
+      <Button client:load size="lg">Large</Button>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">API</h2>
+    <div class="bg-neutral-white rounded-xl shadow-sm overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-neutral-gray-light">
+          <tr>
+            <th class="text-left px-4 py-3 font-medium text-brand-primary">Prop</th>
+            <th class="text-left px-4 py-3 font-medium text-brand-primary">Type</th>
+            <th class="text-left px-4 py-3 font-medium text-brand-primary">Default</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-gray-100">
+          <tr><td class="px-4 py-2 font-mono text-xs">variant</td><td class="px-4 py-2 text-neutral-gray-medium">'primary' | 'secondary' | 'ghost'</td><td class="px-4 py-2 font-mono text-xs">'primary'</td></tr>
+          <tr><td class="px-4 py-2 font-mono text-xs">size</td><td class="px-4 py-2 text-neutral-gray-medium">'sm' | 'md' | 'lg'</td><td class="px-4 py-2 font-mono text-xs">'md'</td></tr>
+          <tr><td class="px-4 py-2 font-mono text-xs">fullWidth</td><td class="px-4 py-2 text-neutral-gray-medium">boolean</td><td class="px-4 py-2 font-mono text-xs">false</td></tr>
+          <tr><td class="px-4 py-2 font-mono text-xs">disabled</td><td class="px-4 py-2 text-neutral-gray-medium">boolean</td><td class="px-4 py-2 font-mono text-xs">false</td></tr>
+          <tr><td class="px-4 py-2 font-mono text-xs">children</td><td class="px-4 py-2 text-neutral-gray-medium">ReactNode</td><td class="px-4 py-2 font-mono text-xs">-</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</DocsLayout>

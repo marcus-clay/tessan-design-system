@@ -1,0 +1,31 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { BadgePlayground } from '../../components/playground/instances/BadgePlayground';
+import { Badge } from '../../components/design-system/Badge';
+---
+<DocsLayout title="Badge">
+  <h1 class="font-heading text-3xl font-bold text-brand-primary mb-2">Badge</h1>
+  <p class="text-neutral-gray-medium mb-8">Badge de statut ou KPI avec bordure pointillee.</p>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Playground</h2>
+    <BadgePlayground client:visible />
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">Status</h2>
+    <div class="flex flex-wrap gap-3 bg-neutral-white rounded-xl p-6 shadow-sm">
+      <Badge client:load status="normal">Normal</Badge>
+      <Badge client:load status="warning">Warning</Badge>
+      <Badge client:load status="danger">Danger</Badge>
+      <Badge client:load status="success">Success</Badge>
+    </div>
+  </section>
+
+  <section class="mb-12">
+    <h2 class="font-heading text-xl font-semibold text-brand-primary mb-4">KPI</h2>
+    <div class="bg-neutral-white rounded-xl p-6 shadow-sm">
+      <Badge client:load variant="kpi">RAPPEL SANTE</Badge>
+    </div>
+  </section>
+</DocsLayout>
